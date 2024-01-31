@@ -1,6 +1,7 @@
 package com.mohammedfares.movies_api.servises;
 
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,12 +46,14 @@ public class JWTService {
 				.setSubject(userDetails.getUsername())
 				.setIssuedAt(new Date(System.currentTimeMillis()))
 				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+				//.signWith(getSignInKey(),SignatureAlgorithm.RS256)
 				.signWith(getSignInKey(),SignatureAlgorithm.HS256)
 				.compact();
 		
 	}
 	
 	public Claims extractAllClaims(String jwt) {
+		System.out.println("- token final : |" + jwt);
 		return Jwts.parserBuilder()
 				.setSigningKey(getSignInKey())
 				.build()
@@ -59,7 +62,7 @@ public class JWTService {
 	}
 	
 	public boolean isTokenValid(String token, UserDetails userDetails) {
-		
+		System.out.println("- token 2 : " + token);
 		final String userName = extractUserName(token);
 		return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
 	}
@@ -69,10 +72,12 @@ public class JWTService {
 	}
 
 	private Date extractExperation(String token) {
-		return extractClaim(token, Claims::getExpiration);
+		//return extractClaim(token, Claims::getExpiration);
+		return new Date(System.currentTimeMillis() + 1000 * 60 * 24);
 	}
 
 	private Key getSignInKey() {
+		//byte[] keyBytes = Base64.getDecoder().decode(SECRET_KEY);
 		byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
 		return Keys.hmacShaKeyFor(keyBytes);
 	}
