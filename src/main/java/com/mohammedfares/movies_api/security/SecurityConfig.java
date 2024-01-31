@@ -2,6 +2,7 @@ package com.mohammedfares.movies_api.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -10,22 +11,25 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.mohammedfares.movies_api.servises.UserRepository;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 	private final JWTAuthentificationFilter jwtAuthentificationFilter;
 	private final AuthenticationProvider authenticationProvider;
-	private final UserDetailsService userDetailsService;
-
-	public SecurityConfig(JWTAuthentificationFilter jwtAuthentificationFilter, AuthenticationProvider authenticationProvider,UserDetailsService userDetailsService) {
+	private final UserRepository userRepository;
+	
+	public SecurityConfig(@Lazy JWTAuthentificationFilter jwtAuthentificationFilter,@Lazy AuthenticationProvider authenticationProvider, UserRepository userRepository) {
 		this.jwtAuthentificationFilter = jwtAuthentificationFilter;
 		this.authenticationProvider = authenticationProvider;
-		this.userDetailsService = userDetailsService;
+		this.userRepository = userRepository;
 	}
 
 	@Bean
@@ -47,7 +51,7 @@ public class SecurityConfig {
 	
 	@Bean public AuthenticationProvider authenticationProvider() {
 		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-		authenticationProvider.setUserDetailsService(userDetailsService);
+		authenticationProvider.setUserDetailsService(userDetailsService());
 		authenticationProvider.setPasswordEncoder(passwordEncoder());
 		return authenticationProvider;
 	}
@@ -60,6 +64,18 @@ public class SecurityConfig {
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
 		
 		return authenticationConfiguration.getAuthenticationManager();
+	}
+	
+	@Bean
+	public UserDetailsService userDetailsService() {
+		
+		return (userName) -> {
+			return userRepository
+					.findByUserName(userName)
+					.orElseThrow(
+							() -> new UsernameNotFoundException("user name not found")
+					);
+		};
 	}
 
 }
