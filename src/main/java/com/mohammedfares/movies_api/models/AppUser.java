@@ -27,6 +27,7 @@ public class AppUser implements UserDetails {
 	@Column(unique = true)
 	private String userName;
 	private String password;
+	private String image;
 	@Enumerated
 	private Role role;
 	public Role getRole() {
@@ -61,9 +62,9 @@ public class AppUser implements UserDetails {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-	public String getUserName() {
-		return userName;
-	}
+	//public String getUserName() {
+	//	return userName;
+	//}
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
@@ -99,6 +100,12 @@ public class AppUser implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		return true;
+	}
+	public String getImage() {
+		return image;
+	}
+	public void setImage(String image) {
+		this.image = image;
 	}
 	
 	
