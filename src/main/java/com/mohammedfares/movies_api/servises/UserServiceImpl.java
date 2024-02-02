@@ -40,11 +40,15 @@ public class UserServiceImpl implements IUserService {
 						)
 				);
 		AppUser user = userRepository.findByUserName(authRequest.getUserName()).orElseThrow();
-		var res = new AuthResponse();
-		res.setJwtToken(
+		var authResponse = new AuthResponse();
+		authResponse.setFirstName(user.getFirstName());
+		authResponse.setLastName(user.getLastName());
+		authResponse.setUserName(user.getUsername());
+		authResponse.setImage(user.getImage());
+		authResponse.setJwtToken(
 				this.jwtService.generateJWTToken(user)
 				);
-		return res;
+		return authResponse;
 	}
 
 
@@ -55,12 +59,17 @@ public class UserServiceImpl implements IUserService {
 		user.setFirstName(registerRequest.getFirstName());
 		user.setLastName(registerRequest.getLastName());
 		user.setUserName(registerRequest.getUserName());
+		user.setImage(registerRequest.getImage());
 		user.setRole(Role.USER);
 		user.setPassword(this.passwordEncoder.encode(registerRequest.getPassword()));
-		userRepository.save(user);
+		var res = userRepository.save(user);
 		var token = this.jwtService.generateJWTToken(user);
 		var authResponse = new AuthResponse();
 		authResponse.setJwtToken(token);
+		authResponse.setFirstName(res.getFirstName());
+		authResponse.setLastName(res.getLastName());
+		authResponse.setUserName(res.getUsername());
+		authResponse.setImage(res.getImage());
 		return authResponse;
 	}
 

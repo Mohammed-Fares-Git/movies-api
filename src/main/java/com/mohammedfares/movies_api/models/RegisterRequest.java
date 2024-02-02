@@ -7,6 +7,7 @@ public class RegisterRequest {
 	private String lastName;
 	private String userName;
 	private String password;
+	private String image;
 	public RegisterRequest() {
 	}
 	public RegisterRequest(String firstName, String lastName, String userName, String password) {
@@ -38,5 +39,11 @@ public class RegisterRequest {
 	}
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	public String getImage() {
+		return image;
+	}
+	public void setImage(String image) {
+		this.image = image;
 	}
 }

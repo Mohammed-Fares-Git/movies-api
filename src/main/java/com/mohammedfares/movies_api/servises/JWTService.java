@@ -45,7 +45,7 @@ public class JWTService {
 				.setClaims(extraClaims)
 				.setSubject(userDetails.getUsername())
 				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
 				//.signWith(getSignInKey(),SignatureAlgorithm.RS256)
 				.signWith(getSignInKey(),SignatureAlgorithm.HS256)
 				.compact();
@@ -72,8 +72,8 @@ public class JWTService {
 	}
 
 	private Date extractExperation(String token) {
-		//return extractClaim(token, Claims::getExpiration);
-		return new Date(System.currentTimeMillis() + 1000 * 60 * 24);
+		return extractClaim(token, Claims::getExpiration);
+		//return new Date(System.currentTimeMillis() + 1000 * 60 * 24);
 	}
 
 	private Key getSignInKey() {
