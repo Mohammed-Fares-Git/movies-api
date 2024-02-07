@@ -20,6 +20,7 @@ public class Movie {
 	private String image;
 	@Column(name = "date_de_release")
 	private String date;
+	private Integer stars = 2;
 	public Movie() {
 	}
 	public Movie(String name, String desc, float price, String image, String date) {
@@ -64,6 +65,12 @@ public class Movie {
 	}
 	public void setDate(String date) {
 		this.date = date;
+	}
+	public Integer getStars() {
+		return stars;
+	}
+	public void setStars(Integer stars) {
+		this.stars = stars;
 	}
 	
 }
